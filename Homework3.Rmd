@@ -1,0 +1,70 @@
+---
+title: "Homework 3"
+author: "Trevor Caughlin"
+date: "January 29, 2018"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1: What is the effect of cut quality on the price of 50,000 round cut diamonds?
+These data are the prices of 50,000 round cut diamonds (source: http://ggplot2.tidyverse.org/reference/diamonds.html )
+
+Data includes:
+**Price** in US dollars (\$326--\$18,823)
+**Carat** (weight) of the diamond (0.2--5.01)
+**Cut** (quality of the cut; Fair, Good, Very Good, Premium, Ideal)
+
+
+```{r diamonds}
+diamonds<-read.csv("diamond.csv")
+head(diamonds)
+```
+
+What is the effect of each cut on the price of a typical diamond (in dollars)?
+
+As output, produce a boxplot of results, parameter estimates, and 95% CI
+
+#Question 2: Does education have an impact on contraception use?
+
+These data represent current contraception use of in a sample of 1607 married women from Fiji. Source: "Reference: Little, R. J. A. (1978). Generalized Linear Models for Cross-Classified Data from the WFS. World Fertility Survey Technical Bulletins, Number 5."
+
+Data inclues: 
+**age** cohort of women
+**education** education level
+**notUsing** count of women in each sample not using contraception
+**using** count of women in each sample using contraception
+**total number of women in sample**
+
+```{r cuse}
+cuse<-read.csv("contraception.csv")
+head(cuse)
+```
+
+Use a binomial glm to test the hypothesis that increased education promotes contraception use.
+
+As output, produce a boxplot of results, parameter estimates, and 95% CI (and a short sentence on whether you reject the null hypothesis or not).
+
+
+#Question 3
+A controversial recent paper claimed that female-named hurricanes led to more deaths than male-named hurricanes (also known as himmicanes), because people do not take hurricanes as seriously as himmicanes. You can find a link to the paper here: http://www.pnas.org/content/111/24/8782.short
+
+Citation: Jung, Kiju, Sharon Shavitt, Madhu Viswanathan, and Joseph M. Hilbe. 2014. "Female Hurricanes Are Deadlier than Male Hurricanes." Proceedings of the National Academy of Sciences 111 (24): 8782-87. doi:10.1073/pnas.1402786111.
+
+Here are the data used for their paper:
+
+```{r hurricanes}
+hurricanes<-read.csv("Hurricane Dataset.csv")
+head(hurricanes)
+```
+
+Re-analyze their data using Poisson glm, with a focus on **alldeaths** as a response variable and **Gender_MF** as a predictor variable. How do your results differ from Jung et al.'s conclusions? What could Jung et al. have done differently to inspire more confidence in their analyses?
+
+#Question 4
+Find one dataset from your own research that could be modelled as normal, binomial, or poisson regression (note: http://datadryad.org/ is a great source for existing datasets if you don't have your own data yet). Run a glm on your data and interpret results in terms of effect size, visualization, and statistical significance.
