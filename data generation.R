@@ -25,14 +25,21 @@ summary(glm(cbind(contraception$using,contraception$notUsing)~contraception$educ
 
 #rpois
 
-intercept=0.5
-effect=1.2
+intercept=1.1
+effect=-1.2
 
-var=rep(c(1,0),times=100)
+var=rep(c(0,1),times=100)
 
-x_variable=#interaction?
-  
-y=pois(length(var),prob=plogis(intercept+effect*var),size=1)
+fungus_gnats=rpois(length(var),lambda=exp(intercept+effect*var))
+
+
+treatment=as.factor(rep(c("Pretreatment","Treated"),times=100))
+
+plot(fungus_gnats~treatment)
+
+fake_gnats=glm(fungus_gnats~treatment,family="poisson")
+
+coef(fake_gnats)
 
 #choose 2 out of 3 of the distributions so far, find your own dataset
 #and analyze
