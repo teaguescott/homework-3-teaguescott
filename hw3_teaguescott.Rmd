@@ -1,0 +1,126 @@
+---
+title: "HW 3"
+author: "Teague Scott"
+date: "2/1/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1: Effect of cut quality on diamond price  
+Data includes **price** in USD, **carat** (weight) of the diamond and **cut** quality
+```{r, include=FALSE}
+diamonds<-read.csv("diamond.csv")
+head(diamonds)
+```
+
+**Boxplot:**
+```{r, echo=F}
+price<-diamonds$price
+cut<-diamonds$cut
+boxplot(price~cut, cex=.5, ylab="Cost in USD", xlab="Cut quality")
+```
+**Parameter estimates:**
+```{r, echo=T}
+diamodel<-glm(price~cut, family = "poisson")
+exp(coef(diamodel))
+```
+**95% confidence interval:**
+```{r, echo=T}
+confint(diamodel)
+```
+because none of our parameter estimates include 0, we can say that they are all significant
+
+**What is the effect of cut on price of a diamond?**
+The parameter estimates show that:  
+good diamonds are 90%, very good diamonds are 91%, ideal diamonds are 79%, and premium diamonds are 105% of the average cost of fair diamonds. This makes ideal diamonds the biggest bang for one's buck.
+
+## Question 2: Does education have an impact on contraception use
+Data on contraception use in a sample of 1607 married Fijian women
+variables: **age**, **education**, **notUsing**, **using**, **sample size**
+
+```{r}
+cuse<-read.csv("contraception.csv")
+edu<-cuse$education
+using<-cuse$using
+notUsing<-cuse$notUsing
+p_using<-cbind(using, notUsing)
+#p_using<-cuse$using/cuse$Total
+summary(cuse)
+head(cuse)
+```
+
+**Boxplot:**
+```{r}
+boxplot(p_using~edu, ylab="Proportion of sample using contraceptives", xlab="Education level")
+```
+**Parameter estimates:**
+```{r}
+cuse.mod<-glm(p_using~edu, family="binomial")
+plogis(coef(cuse.mod))
+```
+**95% confidence interval**
+```{r}
+confint(cuse.mod)
+```
+Because the 95% confidence interval overlaps zero we cannot reject the null hypothesis - there is no significant effect of education level on contraception use.
+
+## Question 3: Hurricanes and Himmicanes
+```{r, include=F}
+hurricanes<-read.csv("Hurricane Dataset.csv")
+str(hurricanes)
+summary(hurricanes)
+gender<-hurricanes$Gender_MF
+str(gender)
+gender<-gender[gender!=""]
+gender<-factor(gender)
+alldeaths<-hurricanes$alldeaths
+alldeaths<-alldeaths[!is.na(alldeaths)]
+```
+
+**Boxplot:**
+```{r}
+hur.or.him<-glm(alldeaths~gender, "poisson")
+boxplot(alldeaths~gender)
+```
+**Parameters:**
+```{r}
+exp(coef(hur.or.him))
+```
+**95% confidence interval:**
+```{r}
+confint(hur.or.him)
+```
+
+Jung et al. are working with data that show some serious heteroskedasticity and uneven sample sizes. As they note in the paper, this heteroskedasticity and large difference between the mean value of deaths and variance causes an issue of overdispersion. The Poisson regression produces parameter values of a mean of 24 deaths for hurricanes, and a mean of `r 23.758*0.599` for males. The 95% confidence interval shows this as a significant difference. It seems like their choice of a negative binomial regression is the right one, but why don't they run this on the number of deaths caused by hurr/himmicanes?
+
+## Question 4: BYOD (bring your own data)
+
+So, white-backed vultures are obligate scavengers and spend a fair bit of time searching for food resources. White-headed vultures are known to predate on small animals as well as attend carcasses. I hypothesize that the two species' movements are greatly affected by their different foraging methods, and that white-headed vultures fly much shorter distances day-to-day. Let's take a look at the difference between **species** and the **average trajectory length**.
+
+**Boxplot:**
+```{r, echo=F}
+distances <- read.csv("./distances.csv")
+distance <- distances$distance
+species <- distances$species
+plot(distance~species, ylab = "Trajectory length (m)", xlab = "Species")
+```
+
+So, after hours of coaxing in R, finally got my data into a format that will work for Poisson regression - a categorical variable, species, as a predictor, and continuous variable, trajectory length, as a response. Unfortunately the data look a little ugly - some **SERIOUS** overdispersion... oh well. Future analyses will require some further honing of the data. Perhaps a look at daily displacement. There is also a serious issue with lumping all the independent birds into non-independent species categories.
+
+**GLM and parameter estimates:**
+```{r}
+dist.mod <- glm(distance~species, family = poisson)
+exp(coef(dist.mod))
+```
+
+These parameters indicate that the y-intercept, or mean? trajectory length, for white-backed vultures is 4200 meters. White-headed movements are on average 45% of that of white-backed vultures - `r 4200*.44`.
+
+**95% confidence interval**
+```{r, echo=T}
+confint(dist.mod)
+```
+The effect parameter doesn't overlap 0, so despite how ugly the data are the difference is significant.
+
